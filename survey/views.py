@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from rest_framework import permissions
 from rest_framework.generics import ListAPIView, CreateAPIView
 
 from survey.models import Question, SurveyResult
-from survey.serializers import QuestionSerializer
+from survey.serializers import QuestionSerializer, SurveyResultSerializer
 
 
 class QuestionsAPIView(ListAPIView):
@@ -11,8 +11,12 @@ class QuestionsAPIView(ListAPIView):
 
 
 class SurveyResultCreateAPIView(CreateAPIView):
-    queryset = None
-    serializer_class = None
+    serializer_class = SurveyResultSerializer
+    queryset = SurveyResult.objects.all()
+
+
 
 class AnalyticsAPIView(ListAPIView):
-    queryset = SurveyResult
+    queryset = SurveyResult.objects.all()
+    serializer_class = SurveyResultSerializer
+    permission_classes = [permissions.IsAdminUser]
