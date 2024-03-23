@@ -1,8 +1,10 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models import F
+from django.db.models import F, Avg
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
-from survey.models import Question, SurveyResult
+from rest_framework.exceptions import ValidationError
+
+from survey.models import Question, SurveyUserResult, Survey
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -11,37 +13,42 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SurveyResultSerializer(serializers.Serializer):
-    car_number = serializers.CharField(max_length=10)
-    questions_answers = serializers.JSONField()
-    average_rating = serializers.DecimalField(max_digits=2, decimal_places=1,
-                                              validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
-    comment = serializers.CharField(allow_blank=True)
+class SurveySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Survey
+        fields = "__all__"
+
+
+class SurveyResultSerializer(serializers.ModelSerializer):
+    questions_answers = serializers.JSONField(write_only=True)
+
+    class Meta:
+        model = SurveyUserResult
+        fields = ['car_number', 'questions_answers', 'average_rating', 'comment']
 
     def create(self, validated_data):
         """ Создание записи о отзыве и обновление среднего рейтинга вопросов """
-
-        survey_result = SurveyResult(
-            car_number=validated_data.get('car_number'),
-            questions_answers=validated_data.get('questions_answers'),
+        car_number = validated_data.get('car_number')
+        survey_result = SurveyUserResult(
+            car_number=car_number,
             average_rating=validated_data.get('average_rating'),
             comment=validated_data.get('comment')
         )
-        for question, answer in validated_data['questions_answers'].items():
-            question_object = Question.objects.filter(question=question)
-            if question_object.exists() and question_object[0].average_rating != 0:
-                question_object.update(count=F("count") + 1)
-                question_object.update(average_rating=(int(question_object[0].average_rating) + 1 + answer) / question_object[0].count)
-
-            elif question_object.exists() and question_object[0].average_rating == 0:
-                question_object.update(count=F("count") + 1)
-                question_object.update(average_rating=answer)
 
         survey_result.save()
-        return survey_result
 
-    def validate_answers(self, value):
-        for rating in value.values():
-            if rating not in [1, 2, 3, 4, 5]:
-                raise serializers.ValidationError("Рейтинг должен быть значением от 1 до 5.")
-        return value
+        for question, rating in validated_data['questions_answers'].items():
+            question_queryset = Question.objects.filter(question=question)
+            if question_queryset.exists():
+                question_from_db = question_queryset[0]
+            else:
+                raise ValidationError("Вопрос не найден")
+                # Добавляем все вопросы и оценки пользователя
+            Survey.objects.create(car_number=survey_result, question=question_from_db, rating=rating)
+
+            # Пересчитываем среднюю оценку для каждого вопроса
+            new_avg_rating = Survey.objects.filter(question=question_from_db).aggregate(Avg("rating"))['rating__avg']
+
+            question_queryset.update(average_rating=new_avg_rating)
+
+        return survey_result
