@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import F
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
@@ -13,10 +14,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 class SurveyResultSerializer(serializers.Serializer):
     car_number = serializers.CharField(max_length=10)
     questions_answers = serializers.JSONField()
-    average_rating = serializers.DecimalField(max_digits=2, decimal_places=1)
+    average_rating = serializers.DecimalField(max_digits=2, decimal_places=1,
+                                              validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     comment = serializers.CharField(allow_blank=True)
 
     def create(self, validated_data):
+        """ Создание записи о отзыве и обновление среднего рейтинга вопросов """
 
         survey_result = SurveyResult(
             car_number=validated_data.get('car_number'),
@@ -24,22 +27,21 @@ class SurveyResultSerializer(serializers.Serializer):
             average_rating=validated_data.get('average_rating'),
             comment=validated_data.get('comment')
         )
-
         for question, answer in validated_data['questions_answers'].items():
-            question_object = get_object_or_404(Question, question=question)
-            if question_object.average_rating != 0:
-                question_object.average_rating = (F("average_rating") + answer) / 2
-            else:
-                question_object.average_rating = answer
-            question_object.save()
+            question_object = Question.objects.filter(question=question)
+            if question_object.exists() and question_object[0].average_rating != 0:
+                question_object.update(count=F("count") + 1)
+                question_object.update(average_rating=(int(question_object[0].average_rating) + 1 + answer) / question_object[0].count)
+
+            elif question_object.exists() and question_object[0].average_rating == 0:
+                question_object.update(count=F("count") + 1)
+                question_object.update(average_rating=answer)
 
         survey_result.save()
         return survey_result
 
-    def validate_answers(self,value):
+    def validate_answers(self, value):
         for rating in value.values():
             if rating not in [1, 2, 3, 4, 5]:
                 raise serializers.ValidationError("Рейтинг должен быть значением от 1 до 5.")
         return value
-
-
