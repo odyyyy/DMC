@@ -7,11 +7,11 @@ from django.utils import timezone
 class Question(models.Model):
     """ Таблица со всеми вопросами и их ср. рейтингом """
     question = models.CharField(max_length=255, verbose_name="Вопрос")
-    average_rating = models.DecimalField(max_digits=2, decimal_places=1, default=0,
-                                         verbose_name="Средняя оценка")
+    question_average_rating = models.DecimalField(max_digits=2, decimal_places=1, default=0,
+                                                  verbose_name="Средняя оценка вопроса")
 
     def __str__(self):
-        return f"{self.question} --- {self.average_rating}"
+        return f"{self.question} --- {self.question_average_rating}"
 
     class Meta:
         verbose_name = "Вопросы"
@@ -47,4 +47,4 @@ class Survey(models.Model):
         unique_together = ('car_number', 'question')
 
     def __str__(self):
-        return f"{self.car_number} --- {self.question} --- {self.rating}"
+        return f"{self.car_number.car_number} {self.question.question}  {self.rating}"

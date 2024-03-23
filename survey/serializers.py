@@ -49,6 +49,6 @@ class SurveyResultSerializer(serializers.ModelSerializer):
             # Пересчитываем среднюю оценку для каждого вопроса
             new_avg_rating = Survey.objects.filter(question=question_from_db).aggregate(Avg("rating"))['rating__avg']
 
-            question_queryset.update(average_rating=new_avg_rating)
+            question_queryset.update(question_average_rating=new_avg_rating)
 
         return survey_result
