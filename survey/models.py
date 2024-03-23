@@ -34,10 +34,13 @@ class SurveyUserResult(models.Model):
     def __str__(self):
         return f"Номер: {self.car_number} --- Ср. Оценка: {self.average_rating}"
 
+def get_delete_question():
+    return Question.objects.get_or_create(question='')[0]
 
 class Survey(models.Model):
     car_number = models.ForeignKey(SurveyUserResult, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+    # TODO: подумать насчет параметра on_delete
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
 
     class Meta:

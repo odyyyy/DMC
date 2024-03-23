@@ -1,7 +1,5 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import F, Avg
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
 from survey.models import Question, SurveyUserResult, Survey
