@@ -1,8 +1,13 @@
+from django.db.models import Avg
+from django.http import JsonResponse
 from rest_framework import permissions
 from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from survey.models import Question, SurveyUserResult
-from survey.serializers import QuestionSerializer, SurveyResultSerializer, AnalyticsSerializer
+from survey.serializers import QuestionSerializer, SurveyResultSerializer, AnalyticsSerializer, \
+    AnalyticsQuestionSerializer
 from survey.services import get_filtered_queryset_by_date
 
 
@@ -16,7 +21,28 @@ class SurveyResultCreateAPIView(CreateAPIView):
     queryset = SurveyUserResult.objects.all()
 
 
-class AnalyticsAllSurveyResultAPIView(ListAPIView):
+class AnalyticsQuestionWithOverallRatingAPIView(APIView):
+    def get(self, request, format=None):
+        # Получаем список всех вопросов
+        questions = Question.objects.all()
+
+        # Создаем сериализатор для списка вопросов
+        serializer = AnalyticsQuestionSerializer(questions, many=True)
+
+        # Подсчитываем общую среднюю оценку всех вопросов
+        overall_avg_rating = SurveyUserResult.objects.aggregate(Avg("average_rating"))['average_rating__avg']
+
+        # Добавляем общую среднюю оценку в конец списка
+        data = serializer.data
+        data.append({'overall_avg_rating': overall_avg_rating})
+
+        return Response(data)
+
+# class AnalyticsQuestionWithOverallRatingAPIView(ListAPIView):
+#     queryset = Question.objects.all()
+#     serializer_class = AnalyticsQuestionSerializer
+
+class AnalyticsAllSurveyResultsAPIView(ListAPIView):
     serializer_class = AnalyticsSerializer
     permission_classes = [permissions.IsAdminUser]
 
