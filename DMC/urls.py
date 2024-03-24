@@ -8,5 +8,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('feedback/rate', views.QuestionsAPIView.as_view(), name='feedback-rate'),
     path('feedback/send', views.SurveyResultCreateAPIView.as_view(), name='feedback-send'),
-    path('analytics/', views.AnalyticsAPIView.as_view(), name='analytics')
+    path('analytics/', views.AnalyticsAPIView.as_view(), name='analytics'),
+    path('analytics/all', views.AnalyticsAllSurveyResultAPIView.as_view(), name='analytics'),
 ]

@@ -1,8 +1,14 @@
-from django.db.models import F, Avg
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from survey.models import Question, SurveyUserResult, Survey
+
+
+class AnalyticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SurveyUserResult
+        fields = ['car_number',  'average_rating', 'published_datetime']
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -10,11 +16,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = "__all__"
 
-
-class SurveySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Survey
-        fields = "__all__"
 
 
 class SurveyResultSerializer(serializers.ModelSerializer):
