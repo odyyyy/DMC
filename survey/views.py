@@ -23,24 +23,17 @@ class SurveyResultCreateAPIView(CreateAPIView):
 
 class AnalyticsQuestionWithOverallRatingAPIView(APIView):
     def get(self, request, format=None):
-        # Получаем список всех вопросов
         questions = Question.objects.all()
 
-        # Создаем сериализатор для списка вопросов
         serializer = AnalyticsQuestionSerializer(questions, many=True)
 
-        # Подсчитываем общую среднюю оценку всех вопросов
-        overall_avg_rating = SurveyUserResult.objects.aggregate(Avg("average_rating"))['average_rating__avg']
+        survey_overall_avg_rating = SurveyUserResult.objects.aggregate(Avg("average_rating"))['average_rating__avg']
 
-        # Добавляем общую среднюю оценку в конец списка
         data = serializer.data
-        data.append({'overall_avg_rating': overall_avg_rating})
+        data.append({'survey_overall_avg_rating': survey_overall_avg_rating})
 
         return Response(data)
 
-# class AnalyticsQuestionWithOverallRatingAPIView(ListAPIView):
-#     queryset = Question.objects.all()
-#     serializer_class = AnalyticsQuestionSerializer
 
 class AnalyticsAllSurveyResultsAPIView(ListAPIView):
     serializer_class = AnalyticsSerializer

@@ -18,15 +18,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class AnalyticsQuestionSerializer(serializers.ModelSerializer):
-    # overall_avg_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
         fields = '__all__'
 
-    # def get_overall_avg_rating(self, obj):
-    #     """ Подсчитываем общую среднюю оценку """
-    #     return SurveyUserResult.objects.aggregate(Avg("average_rating"))['average_rating__avg']
+
 
 
 class SurveyResultSerializer(serializers.ModelSerializer):
