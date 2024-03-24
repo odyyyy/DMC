@@ -14,9 +14,6 @@ def get_filtered_queryset_by_date(date_filter_query: str):
         return filtered_queryset_by_day
 
     elif date_filter_query == "week":
-        # year, week, _ = now().isocalendar()
-        # return SurveyUserResult.objects.filter(published_datetime__year=year,
-        #                                        published_datetime__week=week)
 
         filtered_queryset_by_week = SurveyUserResult.objects.filter(
             published_datetime__gte=today - timedelta(days=7))

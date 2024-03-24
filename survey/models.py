@@ -24,7 +24,7 @@ class SurveyUserResult(models.Model):
     # TODO: Возможность добавлять несколько отзывов с одного и того же car_number
     car_number = models.CharField(max_length=10, unique=True, db_index=True, verbose_name="Номер автомобиля")
     comment = models.TextField(blank=True, verbose_name="Комментарий")
-    average_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Средняя оценка")
+    average_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Средняя оценка", validators=[])
     published_datetime = models.DateTimeField(default=timezone.now, verbose_name="Дата и время")
 
     class Meta:

@@ -45,7 +45,7 @@ class AnalyticsAllSurveyResultsAPIView(ListAPIView):
             filtered_queryset_by_date = get_filtered_queryset_by_date(date_filter_query)
             return filtered_queryset_by_date.order_by('-published_datetime')
         else:
-            return SurveyUserResult.objects.all()
+            return SurveyUserResult.objects.all().order_by('-published_datetime')
 
 
 class AnalyticsAPIView(ListAPIView):

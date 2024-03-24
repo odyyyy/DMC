@@ -1,10 +1,7 @@
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-nd*re&so3y0cb6k45&2m32&8mh$uda^bnb#mrs*zqn)4@$_=*s'
@@ -13,9 +10,11 @@ SECRET_KEY = 'django-insecure-nd*re&so3y0cb6k45&2m32&8mh$uda^bnb#mrs*zqn)4@$_=*s
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
+# CORS_ORIGIN_ALLOW_ALL = True
 
-
-# Application definition
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'survey.apps.SurveyConfig',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'DMC.urls'
@@ -58,7 +59,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DMC.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -68,7 +68,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -88,7 +87,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -100,9 +98,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-
 STATIC_URL = 'static/'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
