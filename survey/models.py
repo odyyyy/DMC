@@ -54,4 +54,4 @@ class Survey(models.Model):
         # unique_together = ('car_number', 'question')
 
     def __str__(self):
-        return f"{self.car_number.car_number} {self.question.question}  {self.rating}"
+        return f"{self.car_number.car_number} {self.question}  {self.rating}"

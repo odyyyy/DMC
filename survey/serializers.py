@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -18,12 +19,9 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class AnalyticsQuestionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Question
         fields = '__all__'
-
-
 
 
 class SurveyResultSerializer(serializers.ModelSerializer):
@@ -47,15 +45,14 @@ class SurveyResultSerializer(serializers.ModelSerializer):
         for question, rating in validated_data['questions_answers'].items():
             question_queryset = Question.objects.filter(question=question)
             if question_queryset.exists():
-                question_from_db = question_queryset[0]
-            else:
-                raise ValidationError("Вопрос не найден")
                 # Добавляем все вопросы и оценки пользователя
-            Survey.objects.create(car_number=survey_result, question=question_from_db, rating=rating)
+                Survey.objects.create(car_number=survey_result, question=question, rating=rating)
 
-            # Пересчитываем среднюю оценку для каждого вопроса
-            new_avg_rating = Survey.objects.filter(question=question_from_db).aggregate(Avg("rating"))['rating__avg']
+                # Пересчитываем среднюю оценку для каждого вопроса
+                new_avg_rating = Survey.objects.filter(question=question).aggregate(Avg("rating"))['rating__avg']
 
-            question_queryset.update(question_average_rating=new_avg_rating)
+                question_queryset.update(question_average_rating=new_avg_rating)
+            else:
+                raise ObjectDoesNotExist("Вопрос не найден в базе данных!")
 
         return survey_result
