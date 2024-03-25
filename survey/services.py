@@ -9,23 +9,17 @@ from survey.models import SurveyUserResult
 def get_filtered_queryset_by_date(date_filter_query: str):
     # TODO: Нужно фильтровать за текущий месяц (номер месяца) или по продолжительности в месяц
     today = timezone.now()
-    if date_filter_query == "day":
-        filtered_queryset_by_day = SurveyUserResult.objects.filter(published_datetime=(today - timedelta(days=1)))
-        return filtered_queryset_by_day
+    filter_options = {
+        'day': today - timedelta(days=1),
+        'week': today - timedelta(days=7),
+        'month': today - timedelta(days=30),
+        'year': today - timedelta(days=365)
+    }
+    filter_by = filter_options[date_filter_query]
 
-    elif date_filter_query == "week":
-
-        filtered_queryset_by_week = SurveyUserResult.objects.filter(
-            published_datetime__gte=today - timedelta(days=7))
-        return filtered_queryset_by_week.order_by('-published_datetime')
+    filtered_queryset_by_date = SurveyUserResult.objects.filter(published_datetime__gte=filter_by)
+    return filtered_queryset_by_date
 
 
-    elif date_filter_query == "month":
-        filtered_queryset_by_month = SurveyUserResult.objects.filter(
-            published_datetime__gte=today - timedelta(days=30))
-        return filtered_queryset_by_month.order_by('-published_datetime')
-
-    elif date_filter_query == "year":
-        filtered_queryset_by_year = SurveyUserResult.objects.filter(
-            published_datetime__gte=today - timedelta(days=365))
-        return filtered_queryset_by_year.order_by('-published_datetime')
+def is_valid_date_filter_query(date_filter_query: str):
+    return date_filter_query is not None and date_filter_query in ['day', 'week', 'month', 'year']

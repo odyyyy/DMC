@@ -22,7 +22,7 @@ class Question(models.Model):
 class SurveyUserResult(models.Model):
     """ Таблица с информацией о результатах прохождения опроса пользователем """
     # TODO: Возможность добавлять несколько отзывов с одного и того же car_number
-    car_number = models.CharField(max_length=10, unique=True, db_index=True, verbose_name="Номер автомобиля")
+    car_number = models.CharField(max_length=10,  db_index=True, verbose_name="Номер автомобиля")
     comment = models.TextField(blank=True, verbose_name="Комментарий")
     average_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Средняя оценка", validators=[])
     published_datetime = models.DateTimeField(default=timezone.now, verbose_name="Дата и время")
@@ -42,9 +42,9 @@ def get_delete_question():
 
 class Survey(models.Model):
     """ Таблица содержащая Номер автомобиля и Вопрос/Ответ  """
-    car_number = models.ForeignKey(SurveyUserResult, on_delete=models.CASCADE, verbose_name="Номер автомобиля")
+    car_number = models.ForeignKey(SurveyUserResult, on_delete=models.CASCADE, verbose_name="Проходивший опрос")
     # TODO: подумать насчет параметра on_delete
-    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, verbose_name="Вопрос")
+    question = models.CharField(max_length=255, verbose_name="Вопрос")
     rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)], verbose_name="Оценка")
 
     class Meta:

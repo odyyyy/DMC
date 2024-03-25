@@ -12,13 +12,10 @@ class SurveyUserResultAdmin(admin.ModelAdmin):
 
 
 class SurveyAdmin(admin.ModelAdmin):
-    list_display = ('car_number_text', 'question_text', 'rating')
-    list_filter = ('question__question',)
+    list_display = ('car_number_text', 'question', 'rating')
+    list_filter = ('question',)
     search_fields = ('car_number__car_number',)
 
-    @staticmethod
-    def question_text(obj):
-        return obj.question.question
 
     @staticmethod
     def car_number_text(obj):

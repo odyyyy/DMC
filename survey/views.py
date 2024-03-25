@@ -1,5 +1,4 @@
 from django.db.models import Avg
-from django.http import JsonResponse
 from rest_framework import permissions
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -8,7 +7,7 @@ from rest_framework.views import APIView
 from survey.models import Question, SurveyUserResult
 from survey.serializers import QuestionSerializer, SurveyResultSerializer, AnalyticsSerializer, \
     AnalyticsQuestionSerializer
-from survey.services import get_filtered_queryset_by_date
+from survey.services import get_filtered_queryset_by_date, is_valid_date_filter_query
 
 
 class QuestionsAPIView(ListAPIView):
@@ -41,7 +40,8 @@ class AnalyticsAllSurveyResultsAPIView(ListAPIView):
 
     def get_queryset(self):
         date_filter_query = self.request.GET.get('q')
-        if date_filter_query is not None:  # Если передан параметр делаем фильтрацию
+        # Если передан параметр делаем фильтрацию
+        if is_valid_date_filter_query(date_filter_query):
             filtered_queryset_by_date = get_filtered_queryset_by_date(date_filter_query)
             return filtered_queryset_by_date.order_by('-published_datetime')
         else:
