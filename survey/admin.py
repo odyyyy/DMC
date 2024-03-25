@@ -28,6 +28,7 @@ class SurveyAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('question', 'question_average_rating')
     list_filter = ('question',)
+    search_fields = ('question',)
 
 
 admin.site.register(Question, QuestionAdmin)

@@ -12,9 +12,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.3.23']
 CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:3000",
+# ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',

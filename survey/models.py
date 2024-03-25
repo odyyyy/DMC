@@ -44,14 +44,14 @@ class Survey(models.Model):
     """ Таблица содержащая Номер автомобиля и Вопрос/Ответ  """
     car_number = models.ForeignKey(SurveyUserResult, on_delete=models.CASCADE, verbose_name="Номер автомобиля")
     # TODO: подумать насчет параметра on_delete
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Вопрос")
+    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, verbose_name="Вопрос")
     rating = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)], verbose_name="Оценка")
 
     class Meta:
         verbose_name = "Оценки пользователей"
         verbose_name_plural = "Оценки пользователей"
         ordering = ["id"]
-        unique_together = ('car_number', 'question')
+        # unique_together = ('car_number', 'question')
 
     def __str__(self):
         return f"{self.car_number.car_number} {self.question.question}  {self.rating}"
