@@ -7,7 +7,7 @@ from survey.models import Question, SurveyUserResult, Survey
 
 
 class AnalyticsSerializer(serializers.ModelSerializer):
-    published_datetime = serializers.DateTimeField(format="%Y-%m-%d %H:%M", read_only=True)
+    published_datetime = serializers.DateTimeField(format="%d-%m-%Y %H:%M", read_only=True)
 
     class Meta:
         model = SurveyUserResult
