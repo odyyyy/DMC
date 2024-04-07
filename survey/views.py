@@ -36,7 +36,7 @@ class AnalyticsQuestionWithOverallRatingAPIView(APIView):
 
 class AnalyticsAllSurveyResultsAPIView(ListAPIView):
     serializer_class = AnalyticsSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
         date_filter_query = self.request.GET.get('q')
@@ -51,4 +51,4 @@ class AnalyticsAllSurveyResultsAPIView(ListAPIView):
 class AnalyticsAPIView(ListAPIView):
     queryset = SurveyUserResult.objects.order_by('-published_datetime')[:5]
     serializer_class = AnalyticsSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
