@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
@@ -11,4 +12,6 @@ urlpatterns = [
     path('analytics/', views.AnalyticsAPIView.as_view(), name='analytics'),
     path('analytics/all', views.AnalyticsAllSurveyResultsAPIView.as_view(), name='analytics'),
     path('analytics/questions', views.AnalyticsQuestionWithOverallRatingAPIView.as_view(), name='analytics'),
+
 ]
+

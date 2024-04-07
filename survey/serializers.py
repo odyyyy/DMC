@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+
 
 from survey.models import Question, SurveyUserResult, Survey
 
